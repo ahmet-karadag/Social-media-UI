@@ -38,5 +38,28 @@ class PostViewModel {
             self.isloading = false
         }
     }
+    
+    func createPost(title: String,content: String,token: String)async -> Bool{
+        isloading = true
+        errorMessage = nil
+        
+        let body = ["title": title,"content": content]
+        
+        do {
+            let _: Post = try await APIService.shared.request(
+                endpoint: "/posts/create",
+                method: "POST",
+                body: body,
+                token: token
+            )
+            await fetchPosts(token: token)
+            isloading = false
+            return true
+        } catch {
+            self.errorMessage = error.localizedDescription
+            isloading = false
+            return false
+        }
+    }
 }
 

@@ -12,6 +12,7 @@ struct PostListView: View {
     @Environment(AuthViewModel.self) private var authViewModel
     
     @State private var showProfile = false
+    @State private var showCreatePost = false
     
     var body: some View {
         NavigationStack{
@@ -37,6 +38,15 @@ struct PostListView: View {
             .navigationTitle("Posts")
             
             .toolbar {
+                
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        showCreatePost.toggle()
+                    }label: {
+                        Image(systemName: "plus.circle")
+                            .font(.title3)
+                    }
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         showProfile.toggle()
@@ -49,6 +59,9 @@ struct PostListView: View {
             }
             .sheet(isPresented: $showProfile){
                 ProfileView()
+            }
+            .sheet(isPresented: $showCreatePost){
+                CreatePostView()
             }
             .task {
                 if let token = UserDefaults.standard.string(forKey: "authToken"){

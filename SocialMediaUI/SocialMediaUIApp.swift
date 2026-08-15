@@ -15,7 +15,7 @@ struct SocialMediaUIApp: App {
             if authViewModel.isAuthenticated {
                 PostListView()
             }else {
-                LoginView()
+                RegisterView()
                     .environment(authViewModel)
             }
         }

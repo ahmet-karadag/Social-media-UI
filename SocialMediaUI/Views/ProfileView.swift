@@ -17,7 +17,7 @@ struct ProfileView: View {
                 Spacer()
                 
                 Button(role: .destructive) {
-                    authViewModel.logoout()
+                    authViewModel.logout()
                 } label: {
                     Text("Log out")
                         .frame(maxWidth: .infinity)

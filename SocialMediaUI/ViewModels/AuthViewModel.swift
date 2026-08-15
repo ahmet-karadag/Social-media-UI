@@ -70,7 +70,7 @@ class AuthViewModel: ObservableObject {
             self.isLoading = false
         }
     }
-    func logoout() {
+    func logout() {
         UserDefaults.standard.removeObject(forKey: tokenKey)
         self.isAuthenticated = false
         self.currentUser = nil
