@@ -10,7 +10,7 @@ import Combine
 
 @Observable
 @MainActor
-class AuthViewModel: ObservableObject {
+class AuthViewModel {
      var currentUser: User?
      var isAuthenticated: Bool = false
      var errorMessage: String?

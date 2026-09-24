@@ -9,11 +9,9 @@ import SwiftUI
 
 struct HomeView: View {
     var body: some View {
-        NavigationStack{
+       
             PostListView()
-                .navigationTitle("Main Page")
-        }
-        
+                .navigationTitle("Main Page")    
     }
 }
 
