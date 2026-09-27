@@ -64,7 +64,7 @@ struct PostListView: View {
                 CreatePostView()
             }
             .task {
-                if let token = UserDefaults.standard.string(forKey: "authToken"){
+                if let token = KeyChainManager.shared.get(key: "authToken"){
                     await postViewModel.fetchPosts(token: token)
                 }
             }

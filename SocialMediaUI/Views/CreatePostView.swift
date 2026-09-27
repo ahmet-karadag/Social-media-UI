@@ -35,7 +35,7 @@ struct CreatePostView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("share"){
                         Task {
-                            if let token = UserDefaults.standard.string(forKey: "authToken") {
+                            if let token = KeyChainManager.shared.get(key: "authToken") {
                                 isSubmitting = true
                                 let success = await postViewModel.createPost(title: title, content: content, token: token)
                                 isSubmitting = false
