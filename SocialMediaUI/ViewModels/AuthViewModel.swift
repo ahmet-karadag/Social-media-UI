@@ -23,13 +23,15 @@ class AuthViewModel {
     }
     private func checkExistingUser() {
         // TODO: Replace with 'let token' when validating the token against the backend later
-        if let _ = UserDefaults.standard.string(forKey: tokenKey) {
+        if let _ = KeyChainManager.shared.get(key: tokenKey) {
             self.isAuthenticated = true
         }
     }
     func logIn(email: String, password: String) async {
         isLoading = true
         errorMessage = nil
+        
+        defer { isLoading = false }
         
         let body = ["email": email, "password": password]
         
@@ -39,19 +41,25 @@ class AuthViewModel {
                 method: "POST",
                 body: body
             )
-            UserDefaults.standard.set(response.token, forKey: tokenKey)
+            /*UserDefaults.standard.set(response.token, forKey: tokenKey)
             self.currentUser = response.user
             self.isAuthenticated = true
-            self.isLoading = false
+            self.isLoading = false*/
+            KeyChainManager.shared.save(key: tokenKey, value: response.token)
+            self.currentUser = response.user
+            self.isAuthenticated = true
+            //self.isLoading = false //removed because we used defer.
             
         } catch  {
             self.errorMessage = error.localizedDescription
-            self.isLoading = false
+            
         }
     }
     func register(username: String,email: String, password: String) async {
         isLoading = true
         errorMessage = nil
+        
+        defer { isLoading = false }
         
         let body = ["username": username, "email": email, "password": password]
         
@@ -61,17 +69,15 @@ class AuthViewModel {
                 method: "POST",
                 body: body
             )
-            UserDefaults.standard.set(response.token, forKey: tokenKey)
+            KeyChainManager.shared.save(key: tokenKey, value: response.token)
             self.currentUser = response.user
             self.isAuthenticated = true
-            self.isLoading = false
         } catch {
             self.errorMessage = error.localizedDescription
-            self.isLoading = false
         }
     }
     func logout() {
-        UserDefaults.standard.removeObject(forKey: tokenKey)
+        KeyChainManager.shared.delete(key: tokenKey)
         self.isAuthenticated = false
         self.currentUser = nil
     }
