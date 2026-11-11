@@ -14,6 +14,9 @@ struct LoginView: View {
     @State private var email: String = ""
     @State private var password: String = ""
     var body: some View {
+        NavigationStack{
+            
+        
         VStack(spacing: 20){
             
             TextField("your email", text: $email)
@@ -61,9 +64,23 @@ struct LoginView: View {
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .disabled(authViewModel.isLoading)
             .padding(.top,10)
+            
+            NavigationLink(destination: RegisterView()) {
+                HStack(spacing: 4) {
+                    Text("Don't have an account?")
+                        .foregroundStyle(.gray)
+                    Text("Sign Up")
+                        .bold()
+                        .foregroundStyle(.blue)
+                }
+                .font(.subheadline)
+                .padding() // Tıklama alanını genişletir
+            }
+            .padding(.bottom, 20)
 
         }
         .padding()
+    }
     }
 }
 

@@ -38,3 +38,9 @@ struct PostListResponse: Codable {
     let data: [Post]
     let pagination: Pagination
 }
+
+
+struct PostCreateResponse: Codable {
+    let message: String
+    let post: Post
+}

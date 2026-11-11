@@ -62,6 +62,7 @@ struct PostListView: View {
             }
             .sheet(isPresented: $showCreatePost){
                 CreatePostView()
+                    .environment(postViewModel)//viewmodelı sheet e aktardım
             }
             .task {
                 if let token = KeyChainManager.shared.get(key: "authToken"){

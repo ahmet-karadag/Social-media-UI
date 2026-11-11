@@ -10,10 +10,13 @@ import SwiftUI
 @main
 struct SocialMediaUIApp: App {
     @State private var authViewModel = AuthViewModel()
+    @State private var postViewModel = PostViewModel()
     var body: some Scene {
         WindowGroup {
            AppView()
         }
         .environment(authViewModel)
+        .environment(postViewModel)
+        
     }
 }

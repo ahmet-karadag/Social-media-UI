@@ -10,12 +10,30 @@ import SwiftUI
 struct ProfileView: View {
     
     @Environment(AuthViewModel.self) private var authViewModel
-    
+    @State private var viewModel = ProfileViewModel()
     var body: some View {
         NavigationStack{
             VStack(spacing: 20){
                 Spacer()
+               
+                if viewModel.isLoading {
+                    ProgressView()
+                }
+                else if let errorMessage = viewModel.errorMessage{
+                    Text(errorMessage)
+                        .foregroundStyle(.red)
+                        .font(.callout)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                }
                 
+                else if let user = viewModel.user{
+                     Text(user.username)
+                         .font(.title2)
+                         .bold()
+                    Text(user.email)
+                        .foregroundStyle(.secondary)
+                 }
                 Button(role: .destructive) {
                     authViewModel.logout()
                 } label: {
@@ -29,6 +47,12 @@ struct ProfileView: View {
                 Spacer()
             }
             .navigationTitle("Profile")
+            .onAppear(){
+                Task {
+                    await viewModel.fetchProfile()
+                }
+            }
+            
         }
     }
 }

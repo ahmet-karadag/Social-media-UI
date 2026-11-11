@@ -20,7 +20,7 @@ class PostViewModel {
     func fetchPosts(token: String,page: Int = 1) async {
         isloading = true
         errorMessage = nil
-        
+        defer { isloading = false }
         do {
             let response: PostListResponse = try await APIService.shared.request(
                 endpoint: "/posts/all?page=\(page)&limit=10",
@@ -46,13 +46,14 @@ class PostViewModel {
         let body = ["title": title,"content": content]
         
         do {
-            let _: Post = try await APIService.shared.request(
+            let response: PostCreateResponse = try await APIService.shared.request(
                 endpoint: "/posts/create",
                 method: "POST",
                 body: body,
                 token: token
             )
-            await fetchPosts(token: token)
+            self.posts.insert(response.post, at: 0)
+            //await fetchPosts(token: token)
             isloading = false
             return true
         } catch {

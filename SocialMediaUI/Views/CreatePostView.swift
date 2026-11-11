@@ -9,7 +9,8 @@ import SwiftUI
 
 struct CreatePostView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var postViewModel = PostViewModel()
+   // @State private var postViewModel = PostViewModel()
+    @Environment(PostViewModel.self) private var postViewModel
     
     @State var title: String = ""
     @State var content: String = ""
@@ -39,10 +40,12 @@ struct CreatePostView: View {
                                 isSubmitting = true
                                 let success = await postViewModel.createPost(title: title, content: content, token: token)
                                 isSubmitting = false
-                                
-                                if success {
-                                    dismiss()
+                                await MainActor.run {
+                                    if success {
+                                        dismiss()
+                                    }
                                 }
+                               
                             }
                         }
                     }
