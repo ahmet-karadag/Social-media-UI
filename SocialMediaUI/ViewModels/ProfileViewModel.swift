@@ -15,6 +15,8 @@ class ProfileViewModel {
     var errorMessage: String?
     var isLoading: Bool = false
     
+    var isUploading: Bool = false
+    
     private let tokenKey = "authToken"
     
     func fetchProfile() async {
@@ -39,4 +41,27 @@ class ProfileViewModel {
             self.errorMessage = error.localizedDescription
         }
     }
+    func uploadProfilePicture(imageData: Data) async {
+            guard !isUploading else { return }
+            guard let token = KeyChainManager.shared.get(key: tokenKey) else {
+                self.errorMessage = "Session token not found."
+                return
+            }
+            
+            isUploading = true
+            self.errorMessage = nil
+            
+            defer { isUploading = false }
+            
+            do {
+                let response: ProfilePictureUploadResponse = try await APIService.shared.uploadMultipart(
+                    endpoint: "/user/profile-picture",
+                    token: token,
+                    imageData: imageData
+                )
+                self.user?.profilePicture = response.data.profilePictureUrl
+            } catch {
+                self.errorMessage = error.localizedDescription
+            }
+        }
 }

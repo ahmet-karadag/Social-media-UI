@@ -11,6 +11,7 @@ struct User :Codable, Identifiable {
     let id: String
     let username: String
     let email: String
+    var profilePicture: String?
     let createdAt: String?
     let updatedAt: String?
     
@@ -18,6 +19,7 @@ struct User :Codable, Identifiable {
         case id = "_id"
         case username
         case email
+        case profilePicture
         case createdAt
         case updatedAt
     }

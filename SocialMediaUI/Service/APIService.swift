@@ -82,4 +82,54 @@ class APIService {
         let decodedData = try JSONDecoder().decode(T.self, from: data)
         return decodedData
     }
+    func uploadMultipart<T: Decodable>(
+        endpoint: String,
+        token: String,
+        imageData: Data,
+        fileName: String = "profile.jpg",
+        mimeType: String = "image/jpeg",
+        fieldName: String = "image"
+    ) async throws -> T {
+        guard let url = URL(string: baseUrl + endpoint) else {
+            throw APIError.invalidURL
+        }
+        
+        let boundary = "Boundary-\(UUID().uuidString)"
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = "POST"
+        urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        urlRequest.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        
+        var body = Data()
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"\(fieldName)\"; filename=\"\(fileName)\"\r\n".data(using: .utf8)!)
+        body.append("Content-Type: \(mimeType)\r\n\r\n".data(using: .utf8)!)
+        body.append(imageData)
+        body.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
+        
+        urlRequest.httpBody = body
+        
+        let (data, response) = try await URLSession.shared.data(for: urlRequest)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+        
+        switch httpResponse.statusCode {
+        case 200...299:
+            break
+        case 401:
+            throw APIError.unauthorized
+        default:
+            if let errorResponse = try? JSONDecoder().decode([String: String].self, from: data),
+               let message = errorResponse["message"] {
+                throw APIError.serverError(message)
+            } else {
+                throw APIError.serverError("Server error code: \(httpResponse.statusCode)")
+            }
+        }
+        
+        let decodedData = try JSONDecoder().decode(T.self, from: data)
+        return decodedData
+    }
 }
